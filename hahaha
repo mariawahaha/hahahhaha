@@ -1,0 +1,280 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Perpustakaan
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+ </head>
+ <body class="bg-[#121212] text-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+   <h1 class="font-semibold text-lg">
+    Perpustakaan
+   </h1>
+   <div class="flex items-center space-x-4 text-white text-xl">
+    <button aria-label="Help" class="focus:outline-none">
+     <i class="fas fa-question-circle">
+     </i>
+    </button>
+    <button aria-label="More options" class="focus:outline-none">
+     <i class="fas fa-ellipsis-v">
+     </i>
+    </button>
+   </div>
+  </header>
+  <!-- Tabs -->
+  <nav class="flex justify-between text-xs font-semibold px-4 mt-3 border-b border-gray-700">
+   <button class="text-white border-b-2 border-[#FF6A3D] pb-1">
+    BACAAN SAAT INI
+   </button>
+   <button class="text-gray-400">
+    ARSIP
+   </button>
+   <button class="text-gray-400">
+    DAFTAR BACAAN
+   </button>
+  </nav>
+  <!-- Content -->
+  <main class="flex-1 px-4 pt-3 overflow-auto">
+   <div class="flex justify-between items-center mb-2">
+    <h2 class="font-bold text-sm">
+     Tersedia Offline
+    </h2>
+    <p class="text-gray-400 text-xs">
+     16 dari 25 cerita
+    </p>
+   </div>
+   <!-- Books grid -->
+   <section class="grid grid-cols-5 gap-x-3 gap-y-4">
+    <!-- Book 1 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Hanna showing a dark artistic illustration of a person" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/7de4333c-ec6c-4ef8-c06e-d5780776aac5.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      Hanna
+     </p>
+    </div>
+    <!-- Book 2 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Its Me showing a woman with black hair and white shirt on red background" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/8d7b44a7-05af-4251-f861-eba1104b0c17.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      its me {LENGKAP}.
+     </p>
+    </div>
+    <!-- Book 3 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Sagara &amp; Syafanna showing a dark fantasy warrior with sword" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/eb0f4371-0768-4df7-3393-8ea74c49e07e.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      SAGARA &amp; SYAFANNA
+     </p>
+    </div>
+    <!-- Book 4 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Alzadaisy showing a black and white silhouette of a person" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/1e04f57d-91cd-4f0a-b79d-07de4bff66af.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      ALZADAISY[End]
+     </p>
+    </div>
+    <!-- Book 5 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Glorious showing a woman with long hair in warm lighting" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/8d0f9a44-0d45-4cf1-1d8f-842e70259f56.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      Glorious [End] (Sudah Terbit)
+     </p>
+    </div>
+    <!-- Book 6 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Prolog showing two men shaking hands in a bright room" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/1d128010-0fac-4390-10da-c962a3672c6e.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      PROLOG (TERBIT)
+     </p>
+    </div>
+    <!-- Book 7 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Champion Class showing a brain illustration on orange background" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/c0e04824-56bf-4a07-22d5-86d199712f49.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      CHAMPION CLASS
+     </p>
+    </div>
+    <!-- Book 8 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Alvaro showing a young man in a dark hoodie" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/3ceb37f8-19d7-4908-cef9-d8fd99b34bc0.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      ALVARO
+     </p>
+    </div>
+    <!-- Book 9 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Venesia showing a man in a suit holding a glass" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/cd19ddde-b08c-4829-2f24-92304bed8c5a.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      VENESIA (SELESAI)
+     </p>
+    </div>
+    <!-- Book 10 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Drive me insane showing a dark abstract face" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/e84f99ca-3c6f-4146-5d00-b9e82b3bcaa8.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      Drive me insane
+     </p>
+    </div>
+    <!-- Book 11 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Adelard || mafia showing a dark figure with text" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/b9b82747-20a6-4d0b-6e75-0e04b615fc83.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      ADELARD || mafia
+     </p>
+    </div>
+    <!-- Book 12 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Leader (END) showing a man and woman looking sideways" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/c0af87d5-2ae4-4406-a03a-e27078b2388c.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      LEADER (END)
+     </p>
+    </div>
+    <!-- Book 13 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of A+ showing four people in a collage style with brown background" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/f17359ac-dc05-426e-2fae-0e24b2a23954.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      A+
+     </p>
+    </div>
+    <!-- Book 14 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Keyala showing a man in black and white profile" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/f2c761ba-f38f-47e6-2d15-d864e249ffff.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      KEYALA
+     </p>
+    </div>
+    <!-- Book 15 -->
+    <div class="flex flex-col items-start">
+     <img alt="Book cover of Nerd showing a woman with glasses and two men in background" class="w-[80px] h-[120px] object-cover rounded-sm" height="120" src="https://storage.googleapis.com/a1aa/image/a22b7673-5738-4e93-c7b0-9bb87b44851c.jpg" width="80"/>
+     <div class="w-full border-b-2 border-[#FF6A3D] mt-1">
+     </div>
+     <div class="flex justify-end w-full mt-0.5">
+      <i class="fas fa-check text-white text-xs">
+      </i>
+     </div>
+     <p class="text-xs mt-1 text-white">
+      NERD
+     </p>
+    </div>
+   </section>
+  </main>
+  <!-- Bottom Navigation -->
+  <nav class="flex justify-between items-center border-t border-gray-700 px-8 py-3 text-gray-400 text-xl">
+   <button aria-label="Home" class="focus:outline-none">
+    <i class="fas fa-home">
+    </i>
+   </button>
+   <button aria-label="Search" class="focus:outline-none">
+    <i class="fas fa-search">
+    </i>
+   </button>
+   <button aria-label="Current" class="text-[#FF6A3D] focus:outline-none">
+    <i class="fas fa-stream">
+    </i>
+   </button>
+   <button aria-label="Edit" class="focus:outline-none">
+    <i class="fas fa-pen">
+    </i>
+   </button>
+   <button aria-label="Notifications" class="focus:outline-none">
+    <i class="fas fa-bell">
+    </i>
+   </button>
+  </nav>
+ </body>
+</html>
