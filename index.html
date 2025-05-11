@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header, nav, main {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #4b5563;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.75rem;
+      border-bottom: 1px solid #4b5563;
+    }
+
+    .tab-active {
+      color: white;
+      border-bottom: 2px solid #FF6A3D;
+      padding-bottom: 0.25rem;
+    }
+
+    .tab {
+      color: #9ca3af;
+      padding-bottom: 0.25rem;
+      background: none;
+      border: none;
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding-top: 0.75rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem 0.75rem;
+    }
+
+    .book {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .book img {
+      width: 200px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .book .underline {
+      width: 100%;
+      border-bottom: 2px solid #FF6A3D;
+      margin-top: 0.25rem;
+    }
+
+    .book .checkmark {
+      align-self: flex-end;
+      font-size: 0.75rem;
+      margin-top: 0.125rem;
+    }
+
+    .book p {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #4b5563;
+      padding: 0.75rem 2rem;
+      color: #9ca3af;
+      font-size: 1.25rem;
+    }
+
+    .bottom-nav .active {
+      color: #FF6A3D;
+    }
+
+    .title-sm {
+      font-size: 0.875rem;
+      font-weight: bold;
+    }
+
+    .subtitle-xs {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 class="title">Library</h1>
+    <div>
+      <button class="icon-btn" aria-label="Help">?</button>
+      <button class="icon-btn" aria-label="More options">⋮</button>
+    </div>
+  </header>
+
+
+  <nav class="tabs">
+    <button class="tab-active">My Series</button>
+    <button class="tab">New</button>
+    <button class="tab">Recommend</button>
+  </nav>
+
+  <main>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <h2 class="title-sm">Today Recent</h2>
+      <p class="subtitle-xs">1 to 10 Series</p>
+    </div>
+
+  
+    <section class="grid">
+      <div class="book">
+        <img src="cute.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>On the way to meet my Mom.</p>
+      </div>
+
+      <div class="book">
+        <img src="wolf.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>Campfire Cooking</p>
+      </div>
+
+      <div class="book">
+        <img src="br.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>Bride of Ignat</p>
+      </div>
+
+      <div class="book">
+        <img src="puppy.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>Don't mess with the puppy</p>
+      </div>
+
+      <div class="book">
+        <img src="mutya.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>Mutya ng Section E</p>
+      </div>
+
+      <div class="book">
+        <img src="new.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>New Recruit</p>
+      </div>
+
+      <div class="book">
+        <img src="the.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>The First Night with the Duke</p>
+      </div>
+
+      <div class="book">
+        <img src="roxana.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>Roxana</p>
+      </div>
+
+      <div class="book">
+        <img src="bla.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>To Marry My Husband</p>
+      </div>
+
+      <div class="book">
+        <img src="ble.jpg" alt="Book cover"/>
+        <div class="underline"></div>
+        <div class="checkmark">✔</div>
+        <p>A Business Proposal</p>
+      </div>
+    </section>
+  </main>
+
+  
+  <nav class="bottom-nav">
+    <button class="icon-btn" aria-label="Home">🏠</button>
+    <button class="icon-btn" aria-label="Search">🔍</button>
+    <button class="icon-btn active" aria-label="Current">📑</button>
+    <button class="icon-btn" aria-label="Edit">✏️</button>
+    <button class="icon-btn" aria-label="Notifications">🔔</button>
+  </nav>
+
+</body>
+</html>
