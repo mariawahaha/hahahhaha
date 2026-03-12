@@ -1,0 +1,56 @@
+{
+    "users": [
+        {
+            "username": "marrmeow",
+            "password": "uwsiwu"
+        },
+        {
+            "username": "admin",
+            "password": "12345"
+        },
+        {
+            "username": "marielle",
+            "password": "12345"
+        },
+        {
+            "username": "marie",
+            "password": "$2y$10$AOanWlknVV6a7RhM1bhTA.uykUXrBHm5OE\/C0seHeYKnHmynmLNeq"
+        },
+        {
+            "username": "mae",
+            "password": "$2y$10$oYQGshUZeAkpweurVOqQEe0S4qvP9DrtXOpRT\/QNd.ERCiMzf\/P3i"
+        },
+        {
+            "username": "mar",
+            "password": "$2y$10$YdTikmwnfyUIilfBtHUBxuZIrj3JEvhS\/V3P7z1SReK3J3oZVCYCW"
+        },
+        {
+            "username": "sam",
+            "password": "$2y$10$Ou\/XavoVKpSZNoWOdbG4W.01RWvEBooqebi9XFr26smuBMQlxGYii"
+        },
+        {
+            "username": "maryel",
+            "email": "mariellezabala17@gmail.com",
+            "confirmpassword": "Mar123!@",
+            "password": "$2y$10$KiYogS3Y7LF9sm6Cq7oYLuzHmSVxVKuNxn\/dFbLIOz3L5vofh.lzW",
+            "otp": 907064,
+            "otp_expiry": 1773056691
+        },
+        {
+            "username": "Mar",
+            "email": "mariellezabala17@gmail.com",
+            "confirmpassword": "Mari123!@",
+            "password": "$2y$10$eBNo0ZrdmhryUv2ZYmMKdOsJI8EfdMdebajXH2fhfRTTW.93Lt.\/O",
+            "otp": 784317,
+            "otp_expiry": 1773189454
+        },
+        {
+            "username": "Sam",
+            "email": "mariellezabala17@gmail.com",
+            "confirmpassword": "Sam123!@",
+            "password": "$2y$10$jFxug\/7jPI9AXV1Y3VZzIebRxdRJx7ti3c06PIxbf7TtJdNgqt0om",
+            "otp": 215259,
+            "otp_expiry": 1773190845
+        }
+    ]
+}
