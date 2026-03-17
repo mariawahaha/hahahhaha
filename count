@@ -1,0 +1,139 @@
+section .data
+    prompt      db "Enter total seconds: ",0
+    prompt_len  equ $-prompt
+    newline     db 13
+    timesup     db "Time's up!",10
+    timesup_len equ $-timesup
+
+    ; paplay command (NEW)
+    cmd_play   db "/usr/bin/paplay",0
+    arg1_play  db "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga",0
+    argv_play  dq cmd_play,arg1_play,0
+    envp_play  dq 0
+
+    ; nanosleep (1 second)
+    timespec:
+        dq 1
+        dq 0
+
+section .bss
+    input resb 10
+
+section .text
+    global _start
+
+_start:
+
+    ; --- Print prompt ---
+    mov rax,1
+    mov rdi,1
+    mov rsi,prompt
+    mov rdx,prompt_len
+    syscall
+
+    ; --- Read input ---
+    mov rax,0
+    mov rdi,0
+    mov rsi,input
+    mov rdx,10
+    syscall
+
+    ; --- Convert ASCII to integer ---
+    xor r12,r12
+    xor rcx,rcx
+convert_loop:
+    movzx rax,byte [input+rcx]
+    cmp al,10
+    je countdown_start
+    sub al,'0'
+    imul r12,10
+    add r12,rax
+    inc rcx
+    jmp convert_loop
+
+countdown_start:
+    cmp r12,0
+    jle alarm
+
+count_loop:
+
+    ; --- Print remaining seconds ---
+    mov rax,r12
+    call print_number
+
+    ; --- Return to start of line ---
+    mov rax,1
+    mov rdi,1
+    mov rsi,newline
+    mov rdx,1
+    syscall
+
+    ; --- Wait 1 second ---
+    mov rax,35
+    mov rdi,timespec
+    xor rsi,rsi
+    syscall
+
+    dec r12
+    jnz count_loop
+
+alarm:
+
+    ; --- Print Time's up ---
+    mov rax,1
+    mov rdi,1
+    mov rsi,timesup
+    mov rdx,timesup_len
+    syscall
+
+    ; --- Play alarm 5 times (~5 sec) ---
+    mov rcx,5
+alarm_loop:
+    mov rax,59
+    mov rdi,cmd_play
+    mov rsi,argv_play
+    mov rdx,envp_play
+    syscall
+    loop alarm_loop
+
+    ; --- Exit ---
+    mov rax,60
+    xor rdi,rdi
+    syscall
+
+
+; ---------------- PRINT NUMBER ----------------
+print_number:
+    test rax,rax
+    jnz work
+    push '0'
+    mov rax,1
+    mov rdi,1
+    mov rsi,rsp
+    mov rdx,1
+    syscall
+    pop rax
+    ret
+
+work:
+    mov rbx,10
+    xor r14,r14
+push_digits:
+    xor rdx,rdx
+    div rbx
+    add dl,'0'
+    push rdx
+    inc r14
+    test rax,rax
+    jnz push_digits
+
+pop_digits:
+    mov rax,1
+    mov rdi,1
+    mov rsi,rsp
+    mov rdx,1
+    syscall
+    pop rax
+    dec r14
+    jnz pop_digits
+    ret
