@@ -1,0 +1,143 @@
+section .data
+    prompt      db "Enter total seconds: ", 0
+    prompt_len  equ $ - prompt
+    colon       db ":"
+    newline     db 10
+    timesup     db 7, "Time's up!", 10
+    timesup_len equ $ - timesup
+
+    ; --- Time structure for nanosleep ---
+    timespec:
+        dq 1        ; tv_sec:  1 second
+        dq 0        ; tv_nsec: 0 nanoseconds
+
+section .bss
+    input resb 10
+
+section .text
+    global _start
+
+_start:
+    ; --- Print Prompt ---
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt
+    mov rdx, prompt_len
+    syscall
+
+    ; --- Read Input ---
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, input
+    mov rdx, 10
+    syscall
+
+    ; --- Convert ASCII to Integer ---
+    xor r12, r12            ; R12 stores total seconds
+    xor rcx, rcx
+.conv:
+    movzx rax, byte [input + rcx]
+    cmp al, 10
+    je .main
+    sub al, '0'
+    imul r12, 10
+    add r12, rax
+    inc rcx
+    jmp .conv
+
+.main:
+    cmp r12, 0
+    jle .done
+
+.timer_loop:
+    ; --- Calculate MM:SS ---
+    mov rax, r12
+    xor rdx, rdx
+    mov rbx, 60
+    div rbx                 ; rax = min, rdx = sec
+    
+    push rdx                ; Save seconds
+    call print_number       ; Print minutes
+
+    ; --- Print Colon ---
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, colon
+    mov rdx, 1
+    syscall
+
+    ; --- Print Seconds with leading zero ---
+    pop r13                 ; Get seconds back
+    cmp r13, 10
+    jge .no_zero
+    push '0'
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+.no_zero:
+    mov rax, r13
+    call print_number
+
+    ; --- Newline ---
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, newline
+    mov rdx, 1
+    syscall
+
+    ; --- Precision Delay (1 Second) ---
+    mov rax, 35             ; sys_nanosleep
+    mov rdi, timespec       ; pointer to our 1s struct
+    xor rsi, rsi            ; NULL (ignore remaining time)
+    syscall
+
+    dec r12
+    jnz .timer_loop
+
+.done:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, timesup
+    mov rdx, timesup_len
+    syscall
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+; --- PRINT NUMBER ROUTINE ---
+print_number:
+    test rax, rax
+    jnz .work
+    push '0'
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+    ret
+.work:
+    mov rbx, 10
+    xor r14, r14            ; Digit counter
+.push:
+    xor rdx, rdx
+    div rbx
+    add dl, '0'
+    push rdx
+    inc r14
+    test rax, rax
+    jnz .push
+.pop:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+    dec r14
+    jnz .pop
+    ret
