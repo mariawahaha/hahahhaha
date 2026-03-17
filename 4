@@ -1,0 +1,191 @@
+section .data
+    prompt      db "Enter value: "
+    prompt_len  equ $ - prompt
+
+    choice_msg  db "m = minutes, s = seconds: "
+    choice_len  equ $ - choice_msg
+
+    colon       db ":"
+    newline     db 10
+
+    timesup     db 10, "Time's up!", 10
+    timesup_len equ $ - timesup
+
+    beep        db 7
+
+    ; sleep 1 second
+    ts:
+        dq 1
+        dq 0
+
+    ; short delay for alarm
+    ts_short:
+        dq 0
+        dq 300000000
+
+section .bss
+    input   resb 16
+    choice  resb 2
+    buffer  resb 6     ; MM:SS
+
+section .text
+    global _start
+
+_start:
+
+    ; ---- ask number ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt
+    mov rdx, prompt_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, input
+    mov rdx, 16
+    syscall
+
+    mov byte [input + rax - 1], 0   ; remove newline
+
+    ; ---- ask type ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, choice_msg
+    mov rdx, choice_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, choice
+    mov rdx, 2
+    syscall
+
+    ; ---- convert input ----
+    mov rsi, input
+    call atoi
+    mov rbx, rax
+
+    ; if minutes → convert
+    mov al, [choice]
+    cmp al, 'm'
+    jne .skip
+    imul rbx, 60
+.skip:
+
+    cmp rbx, 0
+    jle done
+
+; -------------------------
+loop_timer:
+
+    ; compute MM:SS
+    mov rax, rbx
+    xor rdx, rdx
+    mov rcx, 60
+    div rcx
+
+    mov r8, rax    ; minutes
+    mov r9, rdx    ; seconds
+
+    ; ---- format MM ----
+    mov rax, r8
+    mov rcx, 10
+    xor rdx, rdx
+    div rcx
+    add al, '0'
+    mov [buffer], al
+    add dl, '0'
+    mov [buffer+1], dl
+
+    mov byte [buffer+2], ':'
+
+    ; ---- format SS ----
+    mov rax, r9
+    mov rcx, 10
+    xor rdx, rdx
+    div rcx
+    add al, '0'
+    mov [buffer+3], al
+    add dl, '0'
+    mov [buffer+4], dl
+
+    mov byte [buffer+5], 13   ; carriage return
+
+    ; print time
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, buffer
+    mov rdx, 6
+    syscall
+
+    ; sleep 1 sec
+    mov rax, 35
+    mov rdi, ts
+    xor rsi, rsi
+    syscall
+
+    dec rbx
+    jmp loop_timer
+
+; -------------------------
+done:
+
+    ; new line
+    mov byte [buffer], 10
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, buffer
+    mov rdx, 1
+    syscall
+
+    ; print message
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, timesup
+    mov rdx, timesup_len
+    syscall
+
+    ; alarm (5 beeps)
+    mov rcx, 5
+alarm_loop:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, beep
+    mov rdx, 1
+    syscall
+
+    mov rax, 35
+    mov rdi, ts_short
+    xor rsi, rsi
+    syscall
+
+    loop alarm_loop
+
+    ; exit
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+; -------------------------
+; atoi function
+atoi:
+    xor rax, rax
+.next:
+    movzx rcx, byte [rsi]
+    cmp rcx, 0
+    je .done
+    cmp rcx, '0'
+    jb .done
+    cmp rcx, '9'
+    ja .done
+
+    sub rcx, '0'
+    imul rax, 10
+    add rax, rcx
+
+    inc rsi
+    jmp .next
+
+.done:
+    ret
