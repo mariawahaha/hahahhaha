@@ -1,0 +1,114 @@
+.model small
+.stack 100h
+.data
+    message db 'Time''s up! $'
+    minute_prompt db 'Enter minutes: $'
+    second_prompt db 'Enter seconds: $'
+    minute_input db ?
+    second_input db ?
+    countdown_minutes db ?
+    countdown_seconds db ?
+    beep db 0Fh, B4h, 18h, 5Dh
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+    
+    ; Display prompts
+    lea dx, minute_prompt
+    mov ah, 9
+    int 21h
+    
+    ; Read minutes input
+    mov ah, 01h
+    int 21h
+    sub al, '0'
+    mov minute_input, al
+    
+    ; Display prompts
+    lea dx, second_prompt
+    mov ah, 9
+    int 21h
+    
+    ; Read seconds input
+    mov ah, 01h
+    int 21h
+    sub al, '0'
+    mov second_input, al
+    
+    ; Convert input to countdown values
+    mov countdown_minutes, minute_input
+    mov countdown_seconds, second_input
+
+countdown_loop:
+    cmp countdown_minutes, 0
+    jl end_countdown
+    cmp countdown_seconds, 0
+    jne decrement_second
+    
+    dec countdown_minutes
+    mov countdown_seconds, 59
+
+decrement_second:
+    dec countdown_seconds
+    
+    ; Display the current time
+    call display_time
+    
+    ; Delay for one second (adjust this to match your system clock)
+    call delay
+    
+    jmp countdown_loop
+
+end_countdown:
+    ; Display "Time's up!"
+    lea dx, message
+    mov ah, 9
+    int 21h
+    
+    ; Play beep sound
+    call play_beep
+
+exit:
+    mov ax, 4C00h
+    int 21h
+
+display_time proc
+    ; Display minutes and seconds
+    mov al, countdown_minutes
+    add al, '0'
+    mov dl, al
+    mov ah, 2
+    int 21h
+    
+    mov al, ':'
+    mov dl, al
+    mov ah, 2
+    int 21h
+    
+    mov al, countdown_seconds
+    add al, '0'
+    mov dl, al
+    mov ah, 2
+    int 21h
+
+    ret
+display_time endp
+
+delay proc
+    ; Simple delay loop (adjust this for your system clock)
+    mov cx, 5000
+    delay_loop:
+        loop delay_loop
+    ret
+delay endp
+
+play_beep proc
+    lea dx, beep
+    mov ax, 43h
+    int 10h
+    ret
+play_beep endp
+
+end main
