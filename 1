@@ -1,0 +1,165 @@
+section .data
+    prompt_min db "Enter minutes: ", 0
+    prompt_min_len equ $ - prompt_min
+
+    prompt_sec db "Enter seconds: ", 0
+    prompt_sec_len equ $ - prompt_sec
+
+    timesup db 10, "Time's up!", 10
+    timesup_len equ $ - timesup
+
+    newline db 10
+
+    ; timespec for nanosleep (1 second)
+    ts:
+        dq 1      ; seconds
+        dq 0      ; nanoseconds
+
+section .bss
+    min_input resb 4
+    sec_input resb 4
+    buffer resb 6        ; MM:SS
+
+section .text
+    global _start
+
+_start:
+
+    ; ---- Ask for minutes ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt_min
+    mov rdx, prompt_min_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, min_input
+    mov rdx, 3
+    syscall
+
+    mov rsi, min_input
+    call atoi
+    mov rbx, rax         ; minutes
+
+    ; ---- Ask for seconds ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt_sec
+    mov rdx, prompt_sec_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, sec_input
+    mov rdx, 3
+    syscall
+
+    mov rsi, sec_input
+    call atoi
+    mov rcx, rax         ; seconds
+
+    ; total_seconds = minutes * 60 + seconds
+    imul rbx, 60
+    add rbx, rcx         ; rbx = total seconds
+
+; -------------------------------
+countdown:
+
+    cmp rbx, 0
+    jle done
+
+    ; compute minutes and seconds
+    mov rax, rbx
+    xor rdx, rdx
+    mov rcx, 60
+    div rcx              ; rax = minutes, rdx = seconds
+
+    ; format MM
+    mov r8, rax
+    mov rax, r8
+    mov rcx, 10
+    xor rdx, rdx
+    div rcx
+    add al, '0'
+    mov [buffer], al
+    add dl, '0'
+    mov [buffer+1], dl
+
+    ; colon
+    mov byte [buffer+2], ':'
+
+    ; format SS
+    mov rax, rdx         ; seconds
+    mov rcx, 10
+    xor rdx, rdx
+    div rcx
+    add al, '0'
+    mov [buffer+3], al
+    add dl, '0'
+    mov [buffer+4], dl
+
+    mov byte [buffer+5], 10
+
+    ; print time
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, buffer
+    mov rdx, 6
+    syscall
+
+    ; sleep 1 second
+    mov rax, 35
+    mov rdi, ts
+    xor rsi, rsi
+    syscall
+
+    dec rbx
+    jmp countdown
+
+; -------------------------------
+done:
+
+    ; print "Time's up!"
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, timesup
+    mov rdx, timesup_len
+    syscall
+
+    ; beep sound (ASCII 7)
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, beep
+    mov rdx, 1
+    syscall
+
+    ; exit
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+; -------------------------------
+; ASCII bell
+section .data
+    beep db 7
+
+; -------------------------------
+; atoi: convert string to int
+; rsi = input string
+; returns rax
+atoi:
+    xor rax, rax
+.next:
+    movzx rbx, byte [rsi]
+    cmp rbx, 10         ; newline
+    je .done
+    cmp rbx, 0
+    je .done
+    sub rbx, '0'
+    imul rax, 10
+    add rax, rbx
+    inc rsi
+    jmp .next
+.done:
+    ret
