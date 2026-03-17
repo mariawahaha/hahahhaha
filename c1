@@ -1,0 +1,126 @@
+section .data
+    prompt      db "Enter total seconds: ",0
+    prompt_len  equ $-prompt
+
+    newline     db 10
+    timesup     db "Time's up!",10
+    timesup_len equ $-timesup
+
+    ; paplay command
+    cmd_play   db "/usr/bin/paplay",0
+    arg1_play  db "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga",0
+    argv_play  dq cmd_play,arg1_play,0
+    envp_play  dq 0
+
+    ; nanosleep (1 sec)
+    ts:
+        dq 1
+        dq 0
+
+section .bss
+    input resb 10
+
+section .text
+    global _start
+
+_start:
+
+    ; print prompt
+    mov rax,1
+    mov rdi,1
+    mov rsi,prompt
+    mov rdx,prompt_len
+    syscall
+
+    ; read input
+    mov rax,0
+    mov rdi,0
+    mov rsi,input
+    mov rdx,10
+    syscall
+
+    ; convert ASCII to int
+    xor r12,r12
+    xor rcx,rcx
+
+convert:
+    movzx rax,byte [input+rcx]
+    cmp al,10
+    je start
+    sub al,'0'
+    imul r12,10
+    add r12,rax
+    inc rcx
+    jmp convert
+
+start:
+    cmp r12,0
+    jle alarm
+
+countdown:
+    mov rax,r12
+    call print_number
+
+    ; newline
+    mov rax,1
+    mov rdi,1
+    mov rsi,newline
+    mov rdx,1
+    syscall
+
+    ; sleep 1 sec
+    mov rax,35
+    lea rdi,[rel ts]
+    xor rsi,rsi
+    syscall
+
+    dec r12
+    jnz countdown
+
+alarm:
+    ; print message
+    mov rax,1
+    mov rdi,1
+    mov rsi,timesup
+    mov rdx,timesup_len
+    syscall
+
+    ; play sound 5 times
+    mov rcx,5
+play_loop:
+    mov rax,59          ; execve
+    mov rdi,cmd_play
+    mov rsi,argv_play
+    mov rdx,envp_play
+    syscall
+    loop play_loop
+
+    ; exit
+    mov rax,60
+    xor rdi,rdi
+    syscall
+
+
+; -------- print number --------
+print_number:
+    mov rbx,10
+    xor rcx,rcx
+
+push_digits:
+    xor rdx,rdx
+    div rbx
+    add dl,'0'
+    push rdx
+    inc rcx
+    test rax,rax
+    jnz push_digits
+
+print_digits:
+    mov rax,1
+    mov rdi,1
+    mov rsi,rsp
+    mov rdx,1
+    syscall
+    add rsp,8
+    loop print_digits
+    ret
