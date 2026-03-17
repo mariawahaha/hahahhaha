@@ -1,0 +1,208 @@
+section .data
+    prompt      db "Enter value: "
+    prompt_len  equ $ - prompt
+
+    choice_msg  db "Type 'm' for minutes or 's' for seconds: "
+    choice_len  equ $ - choice_msg
+
+    colon       db ":"
+    newline     db 10
+
+    timesup     db 10, "Time's up!", 10
+    timesup_len equ $ - timesup
+
+    beep        db 7
+
+    ; nanosleep structure
+    timespec:
+        dq 1
+        dq 0
+
+    short_ts:
+        dq 0
+        dq 300000000   ; 0.3 sec (for alarm delay)
+
+section .bss
+    input   resb 10
+    choice  resb 2
+
+section .text
+    global _start
+
+_start:
+
+    ; ---- Ask for value ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt
+    mov rdx, prompt_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, input
+    mov rdx, 10
+    syscall
+
+    ; ---- Ask for type (m or s) ----
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, choice_msg
+    mov rdx, choice_len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, choice
+    mov rdx, 2
+    syscall
+
+    ; ---- Convert input to number ----
+    xor r12, r12
+    xor rcx, rcx
+
+.conv:
+    movzx rax, byte [input + rcx]
+    cmp al, 10
+    je .convert_done
+    sub al, '0'
+    imul r12, 10
+    add r12, rax
+    inc rcx
+    jmp .conv
+
+.convert_done:
+
+    ; ---- Check if minutes ----
+    mov al, [choice]
+    cmp al, 'm'
+    jne .skip_min
+    imul r12, 60      ; convert minutes → seconds
+
+.skip_min:
+
+    cmp r12, 0
+    jle .done
+
+; -------------------------
+.timer_loop:
+
+    ; MM:SS
+    mov rax, r12
+    xor rdx, rdx
+    mov rbx, 60
+    div rbx
+
+    push rdx
+    call print_number
+
+    ; colon
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, colon
+    mov rdx, 1
+    syscall
+
+    pop r13
+    cmp r13, 10
+    jge .no_zero
+
+    push '0'
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+
+.no_zero:
+    mov rax, r13
+    call print_number
+
+    ; newline
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, newline
+    mov rdx, 1
+    syscall
+
+    ; sleep 1 sec
+    mov rax, 35
+    mov rdi, timespec
+    xor rsi, rsi
+    syscall
+
+    dec r12
+    jnz .timer_loop
+
+; -------------------------
+.done:
+
+    ; print message
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, timesup
+    mov rdx, timesup_len
+    syscall
+
+    ; ---- Alarm (repeat beep) ----
+    mov rcx, 5
+
+.alarm:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, beep
+    mov rdx, 1
+    syscall
+
+    ; short delay
+    mov rax, 35
+    mov rdi, short_ts
+    xor rsi, rsi
+    syscall
+
+    loop .alarm
+
+    ; exit
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+; -------------------------
+print_number:
+    test rax, rax
+    jnz .work
+
+    push '0'
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+    ret
+
+.work:
+    mov rbx, 10
+    xor r14, r14
+
+.push:
+    xor rdx, rdx
+    div rbx
+    add dl, '0'
+    push rdx
+    inc r14
+    test rax, rax
+    jnz .push
+
+.pop:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, rsp
+    mov rdx, 1
+    syscall
+    pop rax
+    dec r14
+    jnz .pop
+
+    ret
