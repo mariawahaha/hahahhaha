@@ -1,0 +1,190 @@
+section .data
+    prompt_minutes db "Enter minutes: ", 0
+    prompt_seconds db "Enter seconds: ", 0
+    format db "%d", 0
+    zero db '0', 0
+    colon db ':', 0
+    time_up db "Time's up!", 0
+    bell db '\x07', 0
+
+section .bss
+    minutes resb 1
+    seconds resb 1
+    total_seconds resd 1
+    remaining_minutes resb 2
+    remaining_seconds resb 2
+
+section .text
+    global _start
+
+_start:
+    ; Prompt user for minutes
+    mov rax, 1          ; syscall number (sys_write)
+    mov rdi, 1          ; file descriptor (stdout)
+    mov rsi, prompt_minutes ; message to write
+    mov rdx, 14         ; length of message
+    syscall
+
+    ; Read minutes from user
+    read_minutes:
+        mov rax, 0          ; syscall number (sys_read)
+        mov rdi, 0          ; file descriptor (stdin)
+        lea rsi, [minutes] ; buffer to store input
+        mov rdx, 1          ; size of buffer
+        syscall
+
+        ; Convert minutes to integer and calculate total seconds
+        call parse_number
+        imul eax, 60         ; multiply by 60
+        add [total_seconds], eax
+
+    ; Prompt user for seconds
+    mov rax, 1          ; syscall number (sys_write)
+    mov rdi, 1          ; file descriptor (stdout)
+    mov rsi, prompt_seconds ; message to write
+    mov rdx, 14         ; length of message
+    syscall
+
+    ; Read seconds from user
+    read_seconds:
+        mov rax, 0          ; syscall number (sys_read)
+        mov rdi, 0          ; file descriptor (stdin)
+        lea rsi, [seconds] ; buffer to store input
+        mov rdx, 1          ; size of buffer
+        syscall
+
+        ; Convert seconds to integer and calculate total seconds
+        call parse_number
+
+    ; Start countdown
+countdown_loop:
+    cmp dword [total_seconds], 0
+    jle end_countdown
+
+    dec dword [total_seconds]
+    mov eax, [total_seconds]
+
+    ; Calculate minutes and seconds remaining
+    xor edx, edx
+    div byte 60
+    mov [remaining_minutes], al
+    mov [remaining_seconds], dl
+
+    ; Format time as MM:SS
+    call format_time
+
+    ; Display remaining time
+    mov rax, 1          ; syscall number (sys_write)
+    mov rdi, 1          ; file descriptor (stdout)
+    lea rsi, [formatted_time] ; message to write
+    mov rdx, 5          ; length of message
+    syscall
+
+    ; Sleep for 1 second
+    call sleep_1_second
+
+    jmp countdown_loop
+
+end_countdown:
+    ; Display "Time's up!"
+    mov rax, 1          ; syscall number (sys_write)
+    mov rdi, 1          ; file descriptor (stdout)
+    lea rsi, [time_up]  ; message to write
+    mov rdx, 10         ; length of message
+    syscall
+
+    ; Produce an audible alert
+    mov rax, 1          ; syscall number (sys_write)
+    mov rdi, 1          ; file descriptor (stdout)
+    lea rsi, [bell]     ; message to write
+    mov rdx, 1          ; length of message
+    syscall
+
+    ; Exit the program
+    mov rax, 60         ; syscall number (sys_exit)
+    xor rdi, rdi        ; exit code 0
+    syscall
+
+parse_number:
+    ; Convert input to integer
+    xor eax, eax
+    xor ecx, ecx
+    xor edx, edx
+
+    parse_loop:
+        movzx ebx, byte [rsi]
+        cmp ebx, '0'
+        jb end_parse
+        cmp ebx, '9'
+        ja end_parse
+        sub ebx, '0'
+        imul eax, 10
+        add al, bl
+        inc rsi
+        jmp parse_loop
+
+    end_parse:
+    ret
+
+format_time:
+    ; Format time as MM:SS
+    xor ecx, ecx
+
+    ; Format minutes (MM)
+    movzx ebx, byte [remaining_minutes]
+    cmp ebx, 10
+    jl format_minutes_no_leading_zero
+    mov eax, ebx
+    shr eax, 4
+    add al, '0'
+    mov [formatted_time + ecx], al
+    inc ecx
+
+format_minutes_no_leading_zero:
+    movzx ebx, byte [remaining_minutes]
+    and ebx, 15
+    add bl, '0'
+    mov [formatted_time + ecx], al
+    inc ecx
+    mov [formatted_time + ecx], colon
+    inc ecx
+
+    ; Format seconds (SS)
+    movzx ebx, byte [remaining_seconds]
+    cmp ebx, 10
+    jl format_seconds_no_leading_zero
+    mov eax, ebx
+    shr eax, 4
+    add al, '0'
+    mov [formatted_time + ecx], al
+    inc ecx
+
+format_seconds_no_leading_zero:
+    movzx ebx, byte [remaining_seconds]
+    and ebx, 15
+    add bl, '0'
+    mov [formatted_time + ecx], al
+    inc ecx
+
+    ; Null-terminate the string
+    xor eax, eax
+    mov [formatted_time + ecx], al
+    ret
+
+sleep_1_second:
+    ; Sleep for 1 second using nanosleep
+    push rax
+    xor eax, eax
+    mov ebx, 1          ; seconds (1)
+    mov ecx, 0          ; nanoseconds (0)
+    lea rdx, [rbp - 8]  ; pointer to timespec structure
+    push rbx
+    push ecx
+    mov rax, 39         ; syscall number (sys_nanosleep)
+    syscall
+
+    ; Restore registers and return
+    pop rcx
+    pop rbx
+    leave
+    ret
