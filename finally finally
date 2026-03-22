@@ -1,0 +1,229 @@
+section .data 
+menu db "Choose mode:",10 
+db "[1] Seconds only",10 
+db "[2] Minutes only",10 
+db "[3] Minutes + Seconds",10 
+db "Enter choice: " 
+menu_len equ $ - menu 
+
+prompt_min db "Enter minutes: " 
+len_min equ $ - prompt_min 
+
+prompt_sec db "Enter seconds: " 
+len_sec equ $ - prompt_sec 
+
+newline db 10 
+
+timesup db 10, "Time's up!", 10 
+len_timesup equ $ - timesup 
+
+ts dq 1,0 
+ts_short dq 0,200000000 
+
+section .bss 
+choice resb 2 
+min_in resb 16 
+sec_in resb 16 
+buffer resb 6 
+
+section .text 
+global _start 
+
+_start: 
+; -------- MENU -------- 
+mov rax,1 
+mov rdi,1 
+mov rsi,menu 
+mov rdx,menu_len 
+syscall 
+
+mov rax,0 
+mov rdi,0 
+mov rsi,choice 
+mov rdx,2 
+syscall 
+
+movzx rbx, byte [choice] 
+sub rbx, '0' 
+
+; -------- MODE LOGIC -------- 
+cmp rbx,1 
+je seconds_only 
+cmp rbx,2 
+je minutes_only 
+cmp rbx,3 
+je both_mode 
+jmp exit 
+
+; -------- SECONDS ONLY -------- 
+seconds_only: 
+mov rax,1 
+mov rdi,1 
+mov rsi,prompt_sec 
+mov rdx,len_sec 
+syscall 
+
+mov rax,0 
+mov rdi,0 
+mov rsi,sec_in 
+mov rdx,16 
+syscall 
+
+mov byte [sec_in + rax - 1],0 
+mov rsi,sec_in 
+call atoi 
+mov rbx,rax 
+jmp start_count 
+
+; -------- MINUTES ONLY -------- 
+minutes_only: 
+mov rax,1 
+mov rdi,1 
+mov rsi,prompt_min 
+mov rdx,len_min 
+syscall 
+
+mov rax,0 
+mov rdi,0 
+mov rsi,min_in 
+mov rdx,16 
+syscall 
+
+mov byte [min_in + rax - 1],0 
+mov rsi,min_in 
+call atoi 
+
+imul rax,60 
+mov rbx,rax 
+jmp start_count 
+
+; -------- BOTH -------- 
+both_mode: 
+mov rax,1 
+mov rdi,1 
+mov rsi,prompt_min 
+mov rdx,len_min 
+syscall 
+
+mov rax,0 
+mov rdi,0 
+mov rsi,min_in 
+mov rdx,16 
+syscall 
+
+mov byte [min_in + rax - 1],0 
+mov rsi,min_in 
+call atoi 
+mov r8,rax 
+
+mov rax,1 
+mov rdi,1 
+mov rsi,prompt_sec 
+mov rdx,len_sec 
+syscall 
+
+mov rax,0 
+mov rdi,0 
+mov rsi,sec_in 
+mov rdx,16 
+syscall 
+
+mov byte [sec_in + rax - 1],0 
+mov rsi,sec_in 
+call atoi 
+
+imul r8,60 
+add r8,rax 
+mov rbx,r8 
+
+; -------- COUNTDOWN -------- 
+start_count: 
+cmp rbx,0 
+jle done 
+
+countdown: 
+mov rax,rbx 
+xor rdx,rdx 
+mov rcx,60 
+div rcx 
+
+mov r8,rax 
+mov r9,rdx 
+
+; format MM 
+mov rax,r8 
+mov rcx,10 
+xor rdx,rdx 
+div rcx 
+
+add al,'0' 
+mov [buffer],al 
+
+add dl,'0' 
+mov [buffer+1],dl 
+
+mov byte [buffer+2],':' 
+
+; format SS 
+mov rax,r9 
+mov rcx,10 
+xor rdx,rdx 
+div rcx 
+
+add al,'0' 
+mov [buffer+3],al 
+
+add dl,'0' 
+mov [buffer+4],dl 
+
+mov byte [buffer+5],10 
+
+mov rax,1 
+mov rdi,1 
+mov rsi,buffer 
+mov rdx,6 
+syscall 
+
+mov rax,35 
+mov rdi,ts 
+xor rsi,rsi 
+syscall 
+
+dec rbx 
+jnz countdown 
+
+; -------- DONE -------- 
+done: 
+mov rax,1 
+mov rdi,1 
+mov rsi,timesup 
+mov rdx,len_timesup 
+syscall 
+
+exit: 
+mov rax,60 
+xor rdi,rdi 
+syscall 
+
+; -------- ATOI -------- 
+atoi: 
+xor rax,rax 
+
+.next: 
+movzx rcx,byte [rsi] 
+cmp rcx,0 
+je .done 
+cmp rcx,'0' 
+jb .done 
+cmp rcx,'9' 
+ja .done 
+
+sub rcx,'0' 
+imul rax,10 
+add rax,rcx 
+
+inc rsi 
+jmp .next 
+
+.done: 
+ret
